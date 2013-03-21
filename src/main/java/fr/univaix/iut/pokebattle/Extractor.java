@@ -4,20 +4,39 @@ import com.gistlabs.mechanize.MechanizeAgent;
 import com.gistlabs.mechanize.document.Document;
 import com.gistlabs.mechanize.document.node.Node;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Extractor {
     public final static String LIST_ATTACK_URL = "http://bulbapedia.bulbagarden.net/wiki/List_of_moves";
 
     MechanizeAgent agent;
+    Document page;
 
     Extractor(MechanizeAgent agent) {
         this.agent = agent;
+        this.page = agent.get(Extractor.LIST_ATTACK_URL);
+    }
+
+    public List<Attack> ExtractAttacks() {
+        List<Attack> attacks = new ArrayList<Attack>();
+        List<? extends Node> tables = page.getRoot().findAll("table");
+        for (Node table : tables) {
+            List<? extends Node> trs = table.findAll("tr:nth-child(n+2)");
+            for (Node tr : trs) {
+                if (isValidAttackRow(tr)) {
+                    attacks.add(ExtractAttack(tr));
+                }
+            }
+        }
+        return attacks;
+    }
+
+    private static boolean isValidAttackRow(Node tr) {
+        return tr.findAll("td").size() == 9;
     }
 
     public Attack ExtractAttack(String nomAttack) {
-
-        Document page = agent.get(Extractor.LIST_ATTACK_URL);
         Node anchorAttackName = page.getRoot().find("a[title^='" + nomAttack + "']");
 
         if (anchorAttackName.getName() == null)
@@ -27,21 +46,23 @@ public class Extractor {
         return ExtractAttack(tr);
     }
 
-    public Attack ExtractAttack(Node tr) {
+    private Attack ExtractAttack(Node tr) {
         List<? extends Node> tds = tr.findAll("td");
-        return getAttack(tds);
+        return parseAttack(tds);
     }
 
-    private Attack getAttack(List<? extends Node> tds) {
-        //int indexNumber = parseIndexNumber(tds.get(0));
-        String Name = parseString(tds.get(1));
-        Type type = parseType(tds.get(2));
-        Category category = parseCategory(tds.get(3));
-        //Contest contest = parseContest(tds.get(4));
-        int PP = parseInt(tds.get(5));
-        int power = parseInt(tds.get(6));
-        int accuracy = parseInt(tds.get(7));
-        return new Attack(Name, type, category, power, accuracy, PP);
+    private Attack parseAttack(List<? extends Node> tds) {
+        AttackBuilder builder = new AttackBuilder();
+
+        builder.setName(parseString(tds.get(1)));
+        builder.setType(parseEnum(tds.get(2), Type.class));
+        builder.setCategory(parseEnum(tds.get(3), Category.class));
+        builder.setContest(parseEnum(tds.get(4), Contest.class));
+        builder.setPP(parseInt(tds.get(5)));
+        builder.setPower(parseInt(tds.get(6)));
+        builder.setAccuracy(parseInt(tds.get(7)));
+
+        return builder.createAttack();
     }
 
     private int parseInt(Node node) {
@@ -55,39 +76,17 @@ public class Extractor {
         return node.getValue().replaceAll("\\*|%", "");
     }
 
-    private String ParseEnum(Node node) {
-        return parseString(node).toUpperCase();
-    }
-
-    private Contest parseContest(Node node) {
-        String value = ParseEnum(node);
-        return Contest.valueOf(value);
-    }
-
-    private Category parseCategory(Node node) {
-        String value = ParseEnum(node);
-        return Category.valueOf(value);
-    }
-
-    private Type parseType(Node node) {
-        String value = ParseEnum(node);
-        return Type.valueOf(value);
+    private <T extends Enum<T>> T parseEnum(Node node, Class<T> tClass) {
+        String value = parseString(node).toUpperCase();
+        if (value.equals("???"))
+            value = "UNKNOWN";
+        return T.valueOf(tClass, value);
     }
 
     public static void main(String[] args) {
         MechanizeAgent agent = new MechanizeAgent();
-        Document page = agent.get(Extractor.LIST_ATTACK_URL);
-        List<? extends Node> tables = page.getRoot().findAll("table");
         Extractor extractor = new Extractor(agent);
-        for (Node table : tables) {
-            List<? extends Node> trs = table.findAll("tr:nth-child(n+2)");
-            for (Node tr : trs) {
-                if (tr.findAll("td").size() == 9) {
-                    Attack attack = extractor.ExtractAttack(tr);
-                    System.out.println(attack);
-                    System.out.println(tr);
-                }
-            }
-        }
+        List<Attack> attacks = extractor.ExtractAttacks();
+        System.out.println(attacks);
     }
 }
