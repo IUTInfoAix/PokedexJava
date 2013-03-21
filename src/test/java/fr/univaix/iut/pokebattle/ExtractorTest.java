@@ -6,26 +6,37 @@ import com.gistlabs.mechanize.document.node.Node;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
+
 import static org.fest.assertions.Assertions.assertThat;
 
 public class ExtractorTest {
 
-    final static String trempetteHtml = "<tr> \n" +
-            " <td style=\"vertical-align:middle\"> <a href=\"/index.php/Trempette\" title=\"Trempette\">Trempette</a> </td> \n" +
-            " <td style=\"vertical-align:middle\"> <a href=\"/index.php/Normal_(type)\" title=\"Normal (type)\"><img alt=\"normal\" src=\"/images/9/91/Type_miniat_normal.png\" width=\"32\" height=\"14\" /></a> </td> \n" +
-            " <td style=\"vertical-align:middle\"> <a href=\"/index.php/Cat%C3%A9gories_d%27attaque\" title=\"Cat&eacute;gories d'attaque\"><img alt=\"Cat&eacute;gorie miniat statut.gif\" src=\"/images/6/66/Cat%C3%A9gorie_miniat_statut.gif\" width=\"32\" height=\"14\" /></a> </td> \n" +
-            " <td style=\"vertical-align:middle\"> — </td> \n" +
-            " <td style=\"vertical-align:middle\"> — </td> \n" +
-            " <td style=\"vertical-align:middle\"> 40 </td>\n" +
+    private final static String POUND_HTML = "<tr> \n" +
+            " <td> 1 </td> \n" +
+            " <td> <a href=\"/wiki/Pound_(move)\" title=\"Pound (move)\">Pound</a> </td> \n" +
+            " <td align=\"center\" style=\"background:#A8A878\"><a href=\"/wiki/Normal_(type)\" title=\"Normal (type)\"><span style=\"color:#FFF;\">Normal</span></a> </td> \n" +
+            " <td align=\"center\" style=\"background:#C92112\"><a href=\"/wiki/Physical_move\" title=\"Physical move\"><span style=\"color:#F67A1A;\">Physical</span></a> </td> \n" +
+            " <td style=\"text-align:center; background:#F8D030\"><a href=\"/wiki/Tough_Contest\" title=\"Tough Contest\"><span style=\"color:#FFF;\">Tough</span></a> </td> \n" +
+            " <td> 35 </td> \n" +
+            " <td> 40 </td> \n" +
+            " <td> 100% </td> \n" +
+            " <td> I </td>\n" +
             "</tr>";
-    final static String ChargeHtml = "<tr> \n" +
-            " <td style=\"vertical-align:middle\"> <a href=\"/index.php/Charge\" title=\"Charge\">Charge</a> </td> \n" +
-            " <td style=\"vertical-align:middle\"> <a href=\"/index.php/Normal_(type)\" title=\"Normal (type)\"><img alt=\"normal\" src=\"/images/9/91/Type_miniat_normal.png\" width=\"32\" height=\"14\" /></a> </td> \n" +
-            " <td style=\"vertical-align:middle\"> <a href=\"/index.php/Cat%C3%A9gories_d%27attaque\" title=\"Cat&eacute;gories d'attaque\"><img alt=\"Cat&eacute;gorie miniat physique.gif\" src=\"/images/c/c4/Cat%C3%A9gorie_miniat_physique.gif\" width=\"32\" height=\"14\" /></a> </td> \n" +
-            " <td style=\"vertical-align:middle\"> 50<span class=\"explain\" title=\"35 de la premi&egrave;re &agrave; la quatri&egrave;me g&eacute;n&eacute;ration incluse\">*</span> </td> \n" +
-            " <td style=\"vertical-align:middle\"> 100%<span class=\"explain\" title=\"95% de la premi&egrave;re &agrave; la quatri&egrave;me g&eacute;n&eacute;ration incluse\">*</span> </td> \n" +
-            " <td style=\"vertical-align:middle\"> 30 </td>\n" +
+    private final static String KARATE_CHOP_HTML = "<tr> \n" +
+            " <td> 2 </td> \n" +
+            " <td> <a href=\"/wiki/Karate_Chop_(move)\" title=\"Karate Chop (move)\">Karate Chop</a><span class=\"explain\" title=\"Normal-type move in Generation I\">*</span> </td> \n" +
+            " <td align=\"center\" style=\"background:#C03028\"><a href=\"/wiki/Fighting_(type)\" title=\"Fighting (type)\"><span style=\"color:#FFF;\">Fighting</span></a> </td> \n" +
+            " <td align=\"center\" style=\"background:#C92112\"><a href=\"/wiki/Physical_move\" title=\"Physical move\"><span style=\"color:#F67A1A;\">Physical</span></a> </td> \n" +
+            " <td style=\"text-align:center; background:#F8D030\"><a href=\"/wiki/Tough_Contest\" title=\"Tough Contest\"><span style=\"color:#FFF;\">Tough</span></a> </td> \n" +
+            " <td> 25 </td> \n" +
+            " <td> 50 </td> \n" +
+            " <td> 100% </td> \n" +
+            " <td> I </td>\n" +
             "</tr>";
+
+    private static final Attack POUND = new Attack("Pound", Type.NORMAL, Category.PHYSICAL, 40, 100, 35);
+    private static final Attack KARATE_CHOP = new Attack("Karate Chop", Type.FIGHTING, Category.PHYSICAL, 50, 100, 25);
 
     private Extractor extractor;
     private MechanizeMock agent;
@@ -33,35 +44,50 @@ public class ExtractorTest {
     @Before
     public void setUp() {
         agent = new MechanizeMock();
-        agent.addPageRequest(Extractor.LIST_ATTACK_URL, newHtml("Test Page", newTable(trempetteHtml + ChargeHtml)));
+        agent.addPageRequest(Extractor.LIST_ATTACK_URL, newHtml("Test Page", newTable(POUND_HTML + KARATE_CHOP_HTML)));
         extractor = new Extractor(agent);
     }
 
     @Test
     public void testExtractAttackGivenKebabShouldReturnNull() {
-
-        assertThat(extractor.ExtractAttack("Kebab")).isNull();
+        Attack attack = extractor.ExtractAttack("Kebab");
+        assertThat(attack).isNull();
     }
 
     @Test
-    public void testExtractAttackGivenChargeShouldReturnAttackCharge() {
-
-        Attack attack = extractor.ExtractAttack("Charge");
-        assertThat(attack.getName()).isEqualTo("Charge");
+    public void testExtractAttackGivenPoundShouldReturnAttackPound() {
+        Attack attack = extractor.ExtractAttack(POUND.getName());
+        assertThat(attack).isEqualTo(POUND);
     }
 
     @Test
-    public void testExtractAttackGivenTrempetteShouldReturnAttackTrempette() {
-        Attack attack = extractor.ExtractAttack("Trempette");
-        assertThat(attack.getName()).isEqualTo("Trempette");
+    public void testExtractAttackGivenKarateChopShouldReturnAttackKarateChop() {
+        Attack attack = extractor.ExtractAttack(KARATE_CHOP.getName());
+        assertThat(attack).isEqualTo(KARATE_CHOP);
     }
 
     @Test
-    public void testExtractAttackGivenNodeTrempetteShouldReturnTrempette() {
+    public void testExtractAttackGivenNodeKarateChopAndPoundShouldReturnAttackKarateChopAndPound() {
         Document page = agent.get(Extractor.LIST_ATTACK_URL);
-        Node tr = page.getRoot().find("tr");
-        Attack attack = extractor.ExtractAttack(tr);
-        assertThat(attack.getName()).isEqualTo("Trempette");
+        List<? extends Node> trs = page.getRoot().findAll("tr");
+
+        Attack attack = extractor.ExtractAttack(trs.get(0));
+        assertThat(attack).isEqualTo(POUND);
+
+        attack = extractor.ExtractAttack(trs.get(1));
+        assertThat(attack).isEqualTo(KARATE_CHOP);
+    }
+
+    @Test
+    public void testAttackPoundShouldHaveGoodStatistics() throws Exception {
+        Attack attack = extractor.ExtractAttack(POUND.getName());
+
+        assertThat(attack.getName()).isEqualTo(POUND.getName());
+        assertThat(attack.getType()).isEqualTo(POUND.getType());
+        assertThat(attack.getCategory()).isEqualTo(POUND.getCategory());
+        assertThat(attack.getPower()).isEqualTo(POUND.getPower());
+        assertThat(attack.getAccuracy()).isEqualTo(POUND.getAccuracy());
+        assertThat(attack.getPP()).isEqualTo(POUND.getPP());
     }
 
     private String newHtml(String title, String bodyHtml) {
