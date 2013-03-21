@@ -19,6 +19,11 @@ public class Attack {
         this.PP = PP;
     }
 
+    public String getHashTag() {
+        return "#" + name.replace(" ", "");
+    }
+
+
     public String getName() {
         return name;
     }
@@ -61,9 +66,8 @@ public class Attack {
         if (category != attack.category) return false;
         if (contest != attack.contest) return false;
         if (name != null ? !name.equals(attack.name) : attack.name != null) return false;
-        if (type != attack.type) return false;
+        return type == attack.type;
 
-        return true;
     }
 
     @Override

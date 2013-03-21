@@ -96,6 +96,7 @@ public class Extractor {
         MechanizeAgent agent = new MechanizeAgent();
         Extractor extractor = new Extractor(agent);
         List<Attack> attacks = extractor.ExtractAttacks();
-        System.out.println(attacks);
+        for (Attack attack : attacks)
+            System.out.println(attack.getHashTag().length());
     }
 }
