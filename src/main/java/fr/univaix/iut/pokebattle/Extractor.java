@@ -20,9 +20,9 @@ public class Extractor {
 
     public List<Attack> ExtractAttacks() {
         List<Attack> attacks = new ArrayList<Attack>();
-        List<? extends Node> tables = page.getRoot().findAll("table");
+        List<? extends Node> tables = getAttackTables();
         for (Node table : tables) {
-            List<? extends Node> trs = table.findAll("tr:nth-child(n+2)");
+            List<? extends Node> trs = getTableRowsExceptHeader(table);
             for (Node tr : trs) {
                 if (isValidAttackRow(tr)) {
                     attacks.add(ExtractAttack(tr));
@@ -30,10 +30,6 @@ public class Extractor {
             }
         }
         return attacks;
-    }
-
-    private static boolean isValidAttackRow(Node tr) {
-        return tr.findAll("td").size() == 9;
     }
 
     public Attack ExtractAttack(String nomAttack) {
@@ -50,6 +46,19 @@ public class Extractor {
         List<? extends Node> tds = tr.findAll("td");
         return parseAttack(tds);
     }
+
+    private List<? extends Node> getTableRowsExceptHeader(Node table) {
+        return table.findAll("tr:nth-child(n+2)");
+    }
+
+    private List<? extends Node> getAttackTables() {
+        return page.getRoot().findAll("table");
+    }
+
+    private static boolean isValidAttackRow(Node tr) {
+        return tr.findAll("td").size() == 9;
+    }
+
 
     private Attack parseAttack(List<? extends Node> tds) {
         AttackBuilder builder = new AttackBuilder();
