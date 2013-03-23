@@ -81,7 +81,7 @@ public class ExtractorTest {
     }
 
     @Test
-    public void testExtractAttackGivenContestUnkownShouldReturnValidAttack() {
+    public void testExtractAttackGivenContestUnknownShouldReturnValidAttack() {
         Attack attack = extractor.ExtractAttack(FUSION_BOLT.getName());
         assertThat(attack).isEqualTo(FUSION_BOLT);
     }
