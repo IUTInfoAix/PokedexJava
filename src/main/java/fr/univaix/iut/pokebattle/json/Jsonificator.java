@@ -1,7 +1,8 @@
-package fr.univaix.iut.pokebattle;
+package fr.univaix.iut.pokebattle.json;
 
 
 import com.google.gson.Gson;
+import fr.univaix.iut.pokebattle.pokemon.Attack;
 
 import java.util.List;
 

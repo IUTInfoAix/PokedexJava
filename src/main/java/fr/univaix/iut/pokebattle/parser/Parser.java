@@ -1,4 +1,4 @@
-package fr.univaix.iut.pokebattle;
+package fr.univaix.iut.pokebattle.parser;
 
 import com.gistlabs.mechanize.document.node.Node;
 

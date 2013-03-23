@@ -1,6 +1,9 @@
 package fr.univaix.iut.pokebattle;
 
 
+import fr.univaix.iut.pokebattle.extractor.Extractor;
+import fr.univaix.iut.pokebattle.parser.AttackParser;
+import fr.univaix.iut.pokebattle.pokemon.*;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package fr.univaix.iut.pokebattle;
+package fr.univaix.iut.pokebattle.pokemon;
 
 public class Attack {
     private String name;

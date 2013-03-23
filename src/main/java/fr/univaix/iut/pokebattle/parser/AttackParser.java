@@ -1,14 +1,16 @@
-package fr.univaix.iut.pokebattle;
+package fr.univaix.iut.pokebattle.parser;
 
 import com.gistlabs.mechanize.MechanizeAgent;
 import com.gistlabs.mechanize.document.node.Node;
+import fr.univaix.iut.pokebattle.extractor.Extractor;
+import fr.univaix.iut.pokebattle.pokemon.*;
 
 import java.util.List;
 
 public class AttackParser extends Parser {
     public final static String LIST_ATTACK_URL = "http://bulbapedia.bulbagarden.net/wiki/List_of_moves";
 
-    Attack parseAttack(List<? extends Node> tds) {
+    public Attack parseAttack(List<? extends Node> tds) {
         AttackBuilder builder = new AttackBuilder();
 
         builder.setName(parseString(tds.get(1)));

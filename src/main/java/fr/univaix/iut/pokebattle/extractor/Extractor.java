@@ -1,8 +1,10 @@
-package fr.univaix.iut.pokebattle;
+package fr.univaix.iut.pokebattle.extractor;
 
 import com.gistlabs.mechanize.MechanizeAgent;
 import com.gistlabs.mechanize.document.Document;
 import com.gistlabs.mechanize.document.node.Node;
+import fr.univaix.iut.pokebattle.parser.AttackParser;
+import fr.univaix.iut.pokebattle.pokemon.Attack;
 
 import java.util.ArrayList;
 import java.util.List;
