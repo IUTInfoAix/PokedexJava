@@ -9,6 +9,10 @@ public class Attack {
     private int accuracy;
     private int PP;
 
+    public Attack() {
+
+    }
+
     public Attack(String name, Type type, Category category, Contest contest, int power, int accuracy, int PP) {
         this.name = name;
         this.type = type;
