@@ -34,6 +34,6 @@ public class JsonificatorTest {
 
     @Test
     public void testFromAttackToJsonGivenAttackPoundShouldReturnPoundJson() {
-        assertThat(jsonificator.FromAttackToJson(POUND)).isEqualTo("{\"name\":\"Pound\",\"type\":\"NORMAL\",\"category\":\"PHYSICAL\",\"contest\":\"TOUGH\",\"power\":40,\"accuracy\":100,\"PP\":35}");
+        assertThat(jsonificator.FromAttackToJson(POUND)).isEqualTo(POUND_JSON);
     }
 }

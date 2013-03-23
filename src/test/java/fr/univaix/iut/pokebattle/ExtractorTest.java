@@ -55,7 +55,7 @@ public class ExtractorTest {
     @Before
     public void setUp() {
         agent = new MechanizeMock();
-        agent.addPageRequest(Extractor.LIST_ATTACK_URL, newHtml("Test Page", newTable(POUND_HTML + KARATE_CHOP_HTML + FUSION_BOLT_HTML)));
+        agent.addPageRequest(AttackParser.LIST_ATTACK_URL, newHtml("Test Page", newTable(POUND_HTML + KARATE_CHOP_HTML + FUSION_BOLT_HTML)));
         extractor = new Extractor(agent);
     }
 
