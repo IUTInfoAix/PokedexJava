@@ -1,16 +1,22 @@
 package fr.univaix.iut.pokebattle.parser;
 
-import com.gistlabs.mechanize.MechanizeAgent;
 import com.gistlabs.mechanize.document.node.Node;
-import fr.univaix.iut.pokebattle.extractor.Extractor;
 import fr.univaix.iut.pokebattle.pokemon.*;
 
 import java.util.List;
 
-public class AttackParser extends Parser {
-    public final static String LIST_ATTACK_URL = "http://bulbapedia.bulbagarden.net/wiki/List_of_moves";
+public class AttackParser extends AbstractParser<Attack> {
 
-    public Attack parseAttack(List<? extends Node> tds) {
+    AttackParser() {
+    }
+
+    @Override
+    public Attack parse(Node tr) {
+        List<? extends Node> tds = getTableCells(tr);
+        return parseAttack(tds);
+    }
+
+    private Attack parseAttack(List<? extends Node> tds) {
         AttackBuilder builder = new AttackBuilder();
 
         builder.setName(parseString(tds.get(1)));
@@ -24,11 +30,8 @@ public class AttackParser extends Parser {
         return builder.createAttack();
     }
 
-    public static void main(String[] args) {
-        MechanizeAgent agent = new MechanizeAgent();
-        Extractor extractor = new Extractor(agent);
-        List<Attack> attacks = extractor.ExtractAttacks();
-        for (Attack attack : attacks)
-            System.out.println(attack.getHashTag().length());
+    private List<? extends Node> getTableCells(Node tr) {
+        return tr.findAll("td");
     }
+
 }

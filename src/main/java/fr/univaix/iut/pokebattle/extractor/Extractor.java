@@ -1,10 +1,9 @@
 package fr.univaix.iut.pokebattle.extractor;
 
-import com.gistlabs.mechanize.MechanizeAgent;
-import com.gistlabs.mechanize.document.Document;
 import com.gistlabs.mechanize.document.node.Node;
 import com.google.common.collect.Lists;
 import fr.univaix.iut.pokebattle.parser.AttackParser;
+import fr.univaix.iut.pokebattle.parser.AttackParserFactory;
 import fr.univaix.iut.pokebattle.pokemon.Attack;
 
 import java.util.List;
@@ -13,10 +12,9 @@ public class Extractor {
     private final AttackParser attackParser;
     private final Node root;
 
-    public Extractor(MechanizeAgent agent) {
-        Document page = agent.get(AttackParser.LIST_ATTACK_URL);
-        this.root = page.getRoot();
-        this.attackParser = new AttackParser();
+    public Extractor(AttackParserFactory factory) {
+        this.root = factory.getRoot();
+        this.attackParser = factory.createAttackParser();
     }
 
     public Attack ExtractAttack(String attackName) {
@@ -31,7 +29,7 @@ public class Extractor {
 
     public List<Attack> ExtractAttacks() {
         List<Attack> attacks = Lists.newArrayList();
-        for (Node table : getTables(root)) {
+        for (Node table : getTables()) {
             for (Node tr : getTableRowsExceptHeader(table)) {
                 if (isValidAttackRow(tr)) attacks.add(ExtractAttack(tr));
             }
@@ -40,35 +38,30 @@ public class Extractor {
     }
 
     private Attack ExtractAttack(Node tr) {
-        List<? extends Node> tds = getTableCells(tr);
-        return attackParser.parseAttack(tds);
+        return attackParser.parse(tr);
     }
 
-    private List<? extends Node> getTableCells(Node tr) {
-        return tr.findAll("td");
-    }
-
-    private boolean AttackNotFound(Node anchorAttackName) {
-        return anchorAttackName.getName() == null;
-    }
-
-    private List<? extends Node> getTableRowsExceptHeader(Node table) {
-        return table.findAll("tr:nth-child(n+2)");
-    }
-
-    private List<? extends Node> getTables(Node root) {
+    private List<? extends Node> getTables() {
         return root.findAll("table");
-    }
-
-    private static boolean isValidAttackRow(Node tr) {
-        return tr.findAll("td").size() == 9;
     }
 
     private Node findAttackAnchor(String attackName) {
         return root.find("a[title^='" + attackName + "']");
     }
 
-    private Node getEnclosingTableRow(Node anchorAttackName) {
+    private static boolean AttackNotFound(Node anchorAttackName) {
+        return anchorAttackName.getName() == null;
+    }
+
+    private static List<? extends Node> getTableRowsExceptHeader(Node table) {
+        return table.findAll("tr:nth-child(n+2)");
+    }
+
+    private static boolean isValidAttackRow(Node tr) {
+        return tr.findAll("td").size() == 9;
+    }
+
+    private static Node getEnclosingTableRow(Node anchorAttackName) {
         return anchorAttackName.getParent().getParent();
     }
 }

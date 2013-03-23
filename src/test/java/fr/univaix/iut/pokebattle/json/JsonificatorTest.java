@@ -1,7 +1,6 @@
-package fr.univaix.iut.pokebattle;
+package fr.univaix.iut.pokebattle.json;
 
 import com.google.common.collect.Lists;
-import fr.univaix.iut.pokebattle.json.Jsonificator;
 import fr.univaix.iut.pokebattle.pokemon.*;
 import org.junit.Test;
 
