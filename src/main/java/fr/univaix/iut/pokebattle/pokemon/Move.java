@@ -1,6 +1,6 @@
 package fr.univaix.iut.pokebattle.pokemon;
 
-public class Attack {
+public class Move {
     private String name;
     private Type type;
     private Category category;
@@ -9,11 +9,11 @@ public class Attack {
     private int accuracy;
     private int PP;
 
-    public Attack() {
+    public Move() {
 
     }
 
-    public Attack(String name, Type type, Category category, Contest contest, int power, int accuracy, int PP) {
+    public Move(String name, Type type, Category category, Contest contest, int power, int accuracy, int PP) {
         this.name = name;
         this.type = type;
         this.category = category;
@@ -62,15 +62,15 @@ public class Attack {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Attack attack = (Attack) o;
+        Move move = (Move) o;
 
-        if (PP != attack.PP) return false;
-        if (accuracy != attack.accuracy) return false;
-        if (power != attack.power) return false;
-        if (category != attack.category) return false;
-        if (contest != attack.contest) return false;
-        if (name != null ? !name.equals(attack.name) : attack.name != null) return false;
-        return type == attack.type;
+        if (PP != move.PP) return false;
+        if (accuracy != move.accuracy) return false;
+        if (power != move.power) return false;
+        if (category != move.category) return false;
+        if (contest != move.contest) return false;
+        if (name != null ? !name.equals(move.name) : move.name != null) return false;
+        return type == move.type;
 
     }
 
@@ -88,7 +88,7 @@ public class Attack {
 
     @Override
     public String toString() {
-        return "Attack{" +
+        return "Move{" +
                 "name='" + name + '\'' +
                 ", type=" + type +
                 ", category=" + category +

@@ -1,6 +1,6 @@
 package fr.univaix.iut.pokebattle.pokemon;
 
-public class AttackBuilder {
+public class MoveBuilder {
     private String name;
     private Type type;
     private Category category;
@@ -9,42 +9,42 @@ public class AttackBuilder {
     private int pp;
     private Contest contest;
 
-    public AttackBuilder setName(String name) {
+    public MoveBuilder setName(String name) {
         this.name = name;
         return this;
     }
 
-    public AttackBuilder setType(Type type) {
+    public MoveBuilder setType(Type type) {
         this.type = type;
         return this;
     }
 
-    public AttackBuilder setCategory(Category category) {
+    public MoveBuilder setCategory(Category category) {
         this.category = category;
         return this;
     }
 
-    public AttackBuilder setContest(Contest contest) {
+    public MoveBuilder setContest(Contest contest) {
         this.contest = contest;
         return this;
     }
 
-    public AttackBuilder setPower(int power) {
+    public MoveBuilder setPower(int power) {
         this.power = power;
         return this;
     }
 
-    public AttackBuilder setAccuracy(int accuracy) {
+    public MoveBuilder setAccuracy(int accuracy) {
         this.accuracy = accuracy;
         return this;
     }
 
-    public AttackBuilder setPP(int pp) {
+    public MoveBuilder setPP(int pp) {
         this.pp = pp;
         return this;
     }
 
-    public Attack createAttack() {
-        return new Attack(name, type, category, contest, power, accuracy, pp);
+    public Move createMove() {
+        return new Move(name, type, category, contest, power, accuracy, pp);
     }
 }

@@ -2,66 +2,66 @@ package fr.univaix.iut.pokebattle.extractor;
 
 import com.gistlabs.mechanize.document.node.Node;
 import com.google.common.collect.Lists;
-import fr.univaix.iut.pokebattle.parser.AttackParser;
-import fr.univaix.iut.pokebattle.parser.AttackParserFactory;
-import fr.univaix.iut.pokebattle.pokemon.Attack;
+import fr.univaix.iut.pokebattle.parser.MoveParser;
+import fr.univaix.iut.pokebattle.parser.MoveParserFactory;
+import fr.univaix.iut.pokebattle.pokemon.Move;
 
 import java.util.List;
 
 public class Extractor {
-    private final AttackParser attackParser;
+    private final MoveParser moveParser;
     private final Node root;
 
-    public Extractor(AttackParserFactory factory) {
+    public Extractor(MoveParserFactory factory) {
         this.root = factory.getRoot();
-        this.attackParser = factory.createAttackParser();
+        this.moveParser = factory.createMoveParser();
     }
 
-    public Attack ExtractAttack(String attackName) {
-        Node anchorAttackName = findAttackAnchor(attackName);
+    public Move ExtractMove(String moveName) {
+        Node anchorMoveName = findMoveAnchor(moveName);
 
-        if (AttackNotFound(anchorAttackName))
+        if (MoveNotFound(anchorMoveName))
             return null;
 
-        Node tr = getEnclosingTableRow(anchorAttackName);
-        return ExtractAttack(tr);
+        Node tr = getEnclosingTableRow(anchorMoveName);
+        return ExtractMove(tr);
     }
 
-    public List<Attack> ExtractAttacks() {
-        List<Attack> attacks = Lists.newArrayList();
+    public List<Move> ExtractMoves() {
+        List<Move> moves = Lists.newArrayList();
         for (Node table : getTables()) {
             for (Node tr : getTableRowsExceptHeader(table)) {
-                if (isValidAttackRow(tr)) attacks.add(ExtractAttack(tr));
+                if (isValidMoveRow(tr)) moves.add(ExtractMove(tr));
             }
         }
-        return attacks;
+        return moves;
     }
 
-    private Attack ExtractAttack(Node tr) {
-        return attackParser.parse(tr);
+    private Move ExtractMove(Node tr) {
+        return moveParser.parse(tr);
     }
 
     private List<? extends Node> getTables() {
         return root.findAll("table");
     }
 
-    private Node findAttackAnchor(String attackName) {
-        return root.find("a[title^='" + attackName + "']");
+    private Node findMoveAnchor(String moveName) {
+        return root.find("a[title^='" + moveName + "']");
     }
 
-    private static boolean AttackNotFound(Node anchorAttackName) {
-        return anchorAttackName.getName() == null;
+    private static boolean MoveNotFound(Node anchorMoveName) {
+        return anchorMoveName.getName() == null;
     }
 
     private static List<? extends Node> getTableRowsExceptHeader(Node table) {
         return table.findAll("tr:nth-child(n+2)");
     }
 
-    private static boolean isValidAttackRow(Node tr) {
+    private static boolean isValidMoveRow(Node tr) {
         return tr.findAll("td").size() == 9;
     }
 
-    private static Node getEnclosingTableRow(Node anchorAttackName) {
-        return anchorAttackName.getParent().getParent();
+    private static Node getEnclosingTableRow(Node anchorMoveName) {
+        return anchorMoveName.getParent().getParent();
     }
 }

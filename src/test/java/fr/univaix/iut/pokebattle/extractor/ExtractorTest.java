@@ -2,7 +2,7 @@ package fr.univaix.iut.pokebattle.extractor;
 
 
 import fr.univaix.iut.pokebattle.MechanizeMock;
-import fr.univaix.iut.pokebattle.parser.AttackParserFactory;
+import fr.univaix.iut.pokebattle.parser.MoveParserFactory;
 import fr.univaix.iut.pokebattle.pokemon.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,9 +48,9 @@ public class ExtractorTest {
             " <td> V </td>\n" +
             "</tr>";
 
-    private static final Attack POUND = new AttackBuilder().setName("Pound").setType(Type.NORMAL).setCategory(Category.PHYSICAL).setContest(Contest.TOUGH).setPower(40).setAccuracy(100).setPP(35).createAttack();
-    private static final Attack KARATE_CHOP = new AttackBuilder().setName("Karate Chop").setType(Type.FIGHTING).setCategory(Category.PHYSICAL).setContest(Contest.TOUGH).setPower(50).setAccuracy(100).setPP(25).createAttack();
-    private static final Attack FUSION_BOLT = new AttackBuilder().setName("Fusion Bolt").setType(Type.ELECTRIC).setCategory(Category.PHYSICAL).setContest(Contest.UNKNOWN).setPower(100).setAccuracy(100).setPP(5).createAttack();
+    private static final Move POUND = new MoveBuilder().setName("Pound").setType(Type.NORMAL).setCategory(Category.PHYSICAL).setContest(Contest.TOUGH).setPower(40).setAccuracy(100).setPP(35).createMove();
+    private static final Move KARATE_CHOP = new MoveBuilder().setName("Karate Chop").setType(Type.FIGHTING).setCategory(Category.PHYSICAL).setContest(Contest.TOUGH).setPower(50).setAccuracy(100).setPP(25).createMove();
+    private static final Move FUSION_BOLT = new MoveBuilder().setName("Fusion Bolt").setType(Type.ELECTRIC).setCategory(Category.PHYSICAL).setContest(Contest.UNKNOWN).setPower(100).setAccuracy(100).setPP(5).createMove();
 
     private Extractor extractor;
     private MechanizeMock agent;
@@ -58,52 +58,52 @@ public class ExtractorTest {
     @Before
     public void setUp() {
         agent = new MechanizeMock();
-        agent.addPageRequest(AttackParserFactory.LIST_ATTACK_URL, newHtml("Test Page", newTable(POUND_HTML + KARATE_CHOP_HTML + FUSION_BOLT_HTML)));
+        agent.addPageRequest(MoveParserFactory.LIST_MOVE_URL, newHtml("Test Page", newTable(POUND_HTML + KARATE_CHOP_HTML + FUSION_BOLT_HTML)));
 
-        extractor = new Extractor(new AttackParserFactory(agent));
+        extractor = new Extractor(new MoveParserFactory(agent));
     }
 
     @Test
-    public void testExtractAttackGivenKebabShouldReturnNull() {
-        Attack attack = extractor.ExtractAttack("Kebab");
-        assertThat(attack).isNull();
+    public void testExtractMoveGivenKebabShouldReturnNull() {
+        Move move = extractor.ExtractMove("Kebab");
+        assertThat(move).isNull();
     }
 
     @Test
-    public void testExtractAttackGivenPoundShouldReturnAttackPound() {
-        Attack attack = extractor.ExtractAttack(POUND.getName());
-        assertThat(attack).isEqualTo(POUND);
+    public void testExtractMoveGivenPoundShouldReturnMovePound() {
+        Move move = extractor.ExtractMove(POUND.getName());
+        assertThat(move).isEqualTo(POUND);
     }
 
     @Test
-    public void testExtractAttackGivenKarateChopShouldReturnAttackKarateChop() {
-        Attack attack = extractor.ExtractAttack(KARATE_CHOP.getName());
-        assertThat(attack).isEqualTo(KARATE_CHOP);
+    public void testExtractMoveGivenKarateChopShouldReturnMoveKarateChop() {
+        Move move = extractor.ExtractMove(KARATE_CHOP.getName());
+        assertThat(move).isEqualTo(KARATE_CHOP);
     }
 
     @Test
-    public void testExtractAttackGivenContestUnknownShouldReturnValidAttack() {
-        Attack attack = extractor.ExtractAttack(FUSION_BOLT.getName());
-        assertThat(attack).isEqualTo(FUSION_BOLT);
+    public void testExtractMoveGivenContestUnknownShouldReturnValidMove() {
+        Move move = extractor.ExtractMove(FUSION_BOLT.getName());
+        assertThat(move).isEqualTo(FUSION_BOLT);
     }
 
     @Test
-    public void testExtractAttacksShouldReturnListOfAttacksGivenAHTMLDocument() throws Exception {
-        List<Attack> attacks = extractor.ExtractAttacks();
-        assertThat(attacks).containsExactly(POUND, KARATE_CHOP, FUSION_BOLT);
+    public void testExtractMovesShouldReturnListOfMovesGivenAHTMLDocument() throws Exception {
+        List<Move> moves = extractor.ExtractMoves();
+        assertThat(moves).containsExactly(POUND, KARATE_CHOP, FUSION_BOLT);
     }
 
     @Test
-    public void testAttackPoundShouldHaveGoodStatistics() throws Exception {
-        Attack attack = extractor.ExtractAttack(POUND.getName());
+    public void testMovePoundShouldHaveGoodStatistics() throws Exception {
+        Move move = extractor.ExtractMove(POUND.getName());
 
-        assertThat(attack.getName()).isEqualTo(POUND.getName());
-        assertThat(attack.getType()).isEqualTo(POUND.getType());
-        assertThat(attack.getCategory()).isEqualTo(POUND.getCategory());
-        assertThat(attack.getContest()).isEqualTo(POUND.getContest());
-        assertThat(attack.getPower()).isEqualTo(POUND.getPower());
-        assertThat(attack.getAccuracy()).isEqualTo(POUND.getAccuracy());
-        assertThat(attack.getPP()).isEqualTo(POUND.getPP());
+        assertThat(move.getName()).isEqualTo(POUND.getName());
+        assertThat(move.getType()).isEqualTo(POUND.getType());
+        assertThat(move.getCategory()).isEqualTo(POUND.getCategory());
+        assertThat(move.getContest()).isEqualTo(POUND.getContest());
+        assertThat(move.getPower()).isEqualTo(POUND.getPower());
+        assertThat(move.getAccuracy()).isEqualTo(POUND.getAccuracy());
+        assertThat(move.getPP()).isEqualTo(POUND.getPP());
     }
 
     private String newHtml(String title, String bodyHtml) {

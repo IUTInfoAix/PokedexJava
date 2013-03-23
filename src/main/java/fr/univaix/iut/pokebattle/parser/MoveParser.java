@@ -5,19 +5,19 @@ import fr.univaix.iut.pokebattle.pokemon.*;
 
 import java.util.List;
 
-public class AttackParser extends AbstractParser<Attack> {
+public class MoveParser extends AbstractParser<Move> {
 
-    AttackParser() {
+    MoveParser() {
     }
 
     @Override
-    public Attack parse(Node tr) {
+    public Move parse(Node tr) {
         List<? extends Node> tds = getTableCells(tr);
-        return parseAttack(tds);
+        return parseMove(tds);
     }
 
-    private Attack parseAttack(List<? extends Node> tds) {
-        AttackBuilder builder = new AttackBuilder();
+    private Move parseMove(List<? extends Node> tds) {
+        MoveBuilder builder = new MoveBuilder();
 
         builder.setName(parseString(tds.get(1)));
         builder.setType(parseEnum(tds.get(2), Type.class));
@@ -27,7 +27,7 @@ public class AttackParser extends AbstractParser<Attack> {
         builder.setPower(parseInt(tds.get(6)));
         builder.setAccuracy(parseInt(tds.get(7)));
 
-        return builder.createAttack();
+        return builder.createMove();
     }
 
     private List<? extends Node> getTableCells(Node tr) {
