@@ -19,29 +19,21 @@ public class Extractor {
         this.attackParser = new AttackParser();
     }
 
-    public Attack ExtractAttack(String nomAttack) {
-        Node anchorAttackName = root.find("a[title^='" + nomAttack + "']");
+    public Attack ExtractAttack(String attackName) {
+        Node anchorAttackName = findAttackAnchor(attackName);
 
-        if (anchorAttackName.getName() == null)
+        if (AttackNotFound(anchorAttackName))
             return null;
 
         Node tr = getEnclosingTableRow(anchorAttackName);
         return ExtractAttack(tr);
     }
 
-    private Node getEnclosingTableRow(Node anchorAttackName) {
-        return anchorAttackName.getParent().getParent();
-    }
-
     public List<Attack> ExtractAttacks() {
         List<Attack> attacks = Lists.newArrayList();
-        List<? extends Node> tables = getTables(root);
-        for (Node table : tables) {
-            List<? extends Node> trs = getTableRowsExceptHeader(table);
-            for (Node tr : trs) {
-                if (isValidAttackRow(tr)) {
-                    attacks.add(ExtractAttack(tr));
-                }
+        for (Node table : getTables(root)) {
+            for (Node tr : getTableRowsExceptHeader(table)) {
+                if (isValidAttackRow(tr)) attacks.add(ExtractAttack(tr));
             }
         }
         return attacks;
@@ -56,6 +48,10 @@ public class Extractor {
         return tr.findAll("td");
     }
 
+    private boolean AttackNotFound(Node anchorAttackName) {
+        return anchorAttackName.getName() == null;
+    }
+
     private List<? extends Node> getTableRowsExceptHeader(Node table) {
         return table.findAll("tr:nth-child(n+2)");
     }
@@ -66,5 +62,13 @@ public class Extractor {
 
     private static boolean isValidAttackRow(Node tr) {
         return tr.findAll("td").size() == 9;
+    }
+
+    private Node findAttackAnchor(String attackName) {
+        return root.find("a[title^='" + attackName + "']");
+    }
+
+    private Node getEnclosingTableRow(Node anchorAttackName) {
+        return anchorAttackName.getParent().getParent();
     }
 }
