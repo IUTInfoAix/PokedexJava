@@ -1,6 +1,9 @@
-package fr.univaix.iut.pokebattle;
+package fr.univaix.iut.pokebattle.extractor;
 
 
+import fr.univaix.iut.pokebattle.MechanizeMock;
+import fr.univaix.iut.pokebattle.parser.AttackParserFactory;
+import fr.univaix.iut.pokebattle.pokemon.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -55,8 +58,9 @@ public class ExtractorTest {
     @Before
     public void setUp() {
         agent = new MechanizeMock();
-        agent.addPageRequest(Extractor.LIST_ATTACK_URL, newHtml("Test Page", newTable(POUND_HTML + KARATE_CHOP_HTML + FUSION_BOLT_HTML)));
-        extractor = new Extractor(agent);
+        agent.addPageRequest(AttackParserFactory.LIST_ATTACK_URL, newHtml("Test Page", newTable(POUND_HTML + KARATE_CHOP_HTML + FUSION_BOLT_HTML)));
+
+        extractor = new Extractor(new AttackParserFactory(agent));
     }
 
     @Test
@@ -78,7 +82,7 @@ public class ExtractorTest {
     }
 
     @Test
-    public void testExtractAttackGivenContestUnkownShouldReturnValidAttack() {
+    public void testExtractAttackGivenContestUnknownShouldReturnValidAttack() {
         Attack attack = extractor.ExtractAttack(FUSION_BOLT.getName());
         assertThat(attack).isEqualTo(FUSION_BOLT);
     }
